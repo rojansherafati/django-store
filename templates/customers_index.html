@@ -1,0 +1,100 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<form id="frm1" action="/app/customers/store/" method="post">
+    name:<input type="text" name="name">
+    <br>
+    family:<input type="text" name="family">
+    <br>
+    birth_year:<input type="text" name="birth_year">
+    <br>
+    ssn:<input type="text" name="ssn">
+    <br>
+    tel:<input type="text" name="tel">
+    <br>
+    address:<input type="text" name="address">
+    <br>
+    <input type="hidden" name="id" value="0">
+    <input type="submit">
+</form>
+
+<table id="tbl1" border="1">
+
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+
+        function getCustomer(){
+            $.ajax({
+                url:"/app/customers/get/all/",
+                metjod:"post",
+                dataType:"json",
+                success:function(result){
+                    $("#tbl1").empty()
+                    let customers = result.customers
+                    $("#tbl1").append(`<tr>
+                <th>id</th>
+                <th>name</th>
+                <th>family</th>
+                <th>birth_Year</th>
+                <th>ssn</th>
+                <th>tel</th>
+                <th>address</th>
+                <th>delete</th>
+                <th>edit</th>
+                </tr>`)
+                    for (let customer of customers)
+                    $("#tbl1").append(`<tr>
+                <td>${customer.id}</td>
+                <td>${customer.name}</td>
+                <td>${customer.family}</td>
+                <td>${customer.birth_year}</td>
+                <td>${customer.ssn}</td>
+                <td>${customer.tel}</td>
+                <td>${customer.address}</td>
+                <td><a class="del" href="/app/customers/delete/${customer.id}/">delete</a></td>
+                <td><a class="edit" href="/app/customers/edit/${customer.id}/">edit</a></td>
+                </tr>`)
+                }
+            })
+        }
+        getCustomer()
+        $("#tbl1").on("click",".del",function(){
+            let url=$(this).attr("href")
+            $.ajax({
+                url:url,
+                method:"get",
+                dataType:"json",
+                success:function(result){
+                    if(result.message == "succeed"){
+                        getCategory()
+                    }else{
+                        alert("customer is already in use")
+                    }
+                }
+            })
+            return false
+        })
+        $("#tbl1").on("click",".edit",function(result){
+            let url=$(this).attr("href")
+            $.ajax({
+                url:url,
+                method:"post",
+                success:function(result){
+                    $("input[name=name]").val(result.name)
+                    $("input[name=family]").val(result.family)
+                    $("input[name=birth_year]").val(result.birth_year)
+                    $("input[name=ssn]").val(result.ssn)
+                    $("input[name=tel]").val(result.tel)
+                    $("input[name=address]").val(result.address)
+                    $("input[name=id]").val(result.id)
+                    getCategory()
+                }
+            })
+            return false
+        })
+    </script>
+{% endblock %}

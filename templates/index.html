@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'vendor/modal/jquery.modal.min.css' %}" />
+    <style>
+                
+body {
+            margin: 0;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background-color: lightblue;
+            height: 40px;
+        }
+
+        aside {
+            width: 300px;
+            background-color: lightyellow;
+            height: calc(100vh - 70px);
+            overflow: auto;
+
+        }
+
+        aside ul {
+            list-style-type: none;
+
+        }
+
+        aside ul li {
+            margin-bottom: 8px;
+        }
+        aside ul li a {
+            text-transform: uppercase;
+            text-decoration: none;
+            color: crimson;
+            transition: all 0.5s;
+        }
+        aside ul li a:hover {
+            color: darkred;
+        }
+
+        .content {
+            width: calc(100% - 300px);
+            background-color: lightcoral;
+            height: calc(100vh - 70px);
+            overflow: auto;
+        }
+
+        .content table {
+            width: 100%;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .content table tr:nth-child(odd) {
+            background-color: lightyellow;
+            transition: all 0.3s;
+        }
+
+        .content table tr:nth-child(even) {
+            background-color: lightsalmon;
+            transition: all 0.3s;
+        }
+
+        .content table tr:nth-child(odd):hover {
+            background-color: yellow;
+        }
+
+        .content table tr:nth-child(even):hover {
+            background-color: salmon;
+        }
+
+        footer {
+            position: fixed;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background-color: lightgreen;
+            height: 30px;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+
+    </nav>
+    <main>
+        <aside>
+            <ul>
+                <li>
+                    <a href="/app/dashboard/">dashboard</a>
+                </li>
+                <li>
+                    <a href="/app/products/">products</a>
+                </li>
+                <li>
+                    <a href="/app/customers/">customers</a>
+                </li>
+                <li>
+                    <a href="/app/categories/">categories</a>
+                </li>
+                <li>
+                    <a href="/app/sellers/">sellers</a>
+                </li>
+                <li>
+                    <a href="/app/brands/">brands</a>
+                </li>
+            </ul>
+        </aside>
+        <div class="content">
+            {% block content %}
+            
+            {% endblock %}
+        </div>
+
+
+
+    </main>
+    <footer>
+
+    </footer>
+
+<script src="{% static 'js/jquery-3.7.1.js' %}" >
+</script>
+<script src="{% static 'vendor/modal/jquery.modal.min.js' %}"></script>
+
+{% block scripts %}
+
+{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<form id="frm1" action="/app/products/store/" method="post">
+    name:<input type="text" name="name">
+    <br>
+    price:<input type="number" name="price">
+    <br>
+    brand:<select id="sel1" name="brand">
+    
+
+    </select>
+    <input type="hidden" name="id" value="0">
+
+    <input type="button" id="btn1" value="...">
+    <br>
+    categories:<input type="button" id="btn2" value="..."><div class="c1">
+
+    </div>
+    <br>
+    <input type="submit"> 
+</form>
+<table id="tbl1" border="1">
+
+</table>
+<div id="ex1" class="modal">
+    <form id="frm2" action="/app/brands/modal/store/" method="post">
+        <input type="text" name="name">
+        <br>
+        <input type="submit" value="save">
+    </form>
+</div>
+<div id="ex2" class="modal">
+    <form id="frm3" action="/app/categories/modal/store/" method="post">
+        <input type="text" name="name">
+        <br>
+        <input type="submit" value="save">
+    </form>
+</div>
+<div id="ex3" class="modal">
+    <p>Error</p>
+</div>
+<div id="ex4" class="modal">
+    <p>Error</p>
+</div>
+    
+{% endblock %}
+{% block scripts %}
+    <script>
+        function getCategories(gc){
+            $.ajax({
+                url:"/app/categories/get/data/",
+                metjod:"post",
+                dataType:"json",
+                success:function(result){
+                    $(".c1").empty()
+                    for( let category of result.categories){
+                        if (gc == category.id){
+                            $(".c1").append(`<input type="checkbox" checked name="categories" value="${category.id}">${category.name}<br>`)
+                        }else(
+                            $(".c1").append(`<input type="checkbox" name="categories" value="${category.id}">${category.name}<br>`)
+                        )
+                    }
+                }
+            })
+        }
+        getCategories()
+        function getBrand(){
+            $.ajax({
+                url:"/app/brands/get/data/",
+                metjod:"post",
+                dataType:"json",
+                success:function(result){
+                    let brands = result.brands
+                    for (let brand of brands)
+                         $("#sel1").append(`<option value=${brand.id}>${brand.name}</option>`)
+                    }
+                }
+            )}
+        getBrand()
+        $("#frm1").submit(function(event){
+            event.preventDefault()
+            $.ajax({
+                url:$("#frm1").attr("action"),
+                method:$("#frm1").attr("method"),
+                dataType:"json",
+                data:$("#frm1").serialize(),
+                success:function(result){
+                    if(result.message == "saved"){
+                        window.location="/app/products/"
+                    }else{
+                        alert("error")
+                    }
+                }
+            })
+        })
+        $("#btn1").click(function(){
+            $("#ex1").modal()
+        })
+        $("#frm2").submit(function(event){
+            event.preventDefault()
+            $.ajax({
+                url:$("#frm2").attr("action"),
+                method:$("#frm2").attr("method"),
+                dataType:"json",
+                data:$("#frm2").serialize(),
+                success:function(result){
+                    if(result.message == "saved"){
+                        $("#sel1").empty()
+                        getBrand()
+                    }else{
+                        $("#ex4").modal()
+                    }
+                }
+            })
+        })
+        $("#btn2").click(function(){
+            $("#ex2").modal()
+        })
+        $("#frm3").submit(function(event){
+            event.preventDefault()
+            $.ajax({
+                url:$("#frm3").attr("action"),
+                method:$("#frm3").attr("method"),
+                dataType:"json",
+                data:$("#frm3").serialize(),
+                success:function(result){
+                    if(result.message == "saved"){
+                        $(".c1").empty()
+                        getCategories()
+                    }else{
+                        $("#ex3").modal()
+                    }
+                }
+            })
+        })
+        let url = window.location + ""
+        if(url.includes("edit")== true){
+            let parts = url.split("/")
+            let id = parts.at(-2)
+            $.ajax({
+                url:"/app/products/get/one/",
+                method:"post",
+                dataType:"json",
+                data:{"id":id},
+                success:function(result){
+                    console.log(result)
+                    $("input[name=name]").val(result.name)
+                    $("input[name=price]").val(result.price)
+                    getBrand(result.brands)
+                }
+            })
+
+        }
+    </script>
+{% endblock %}

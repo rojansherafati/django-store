@@ -1,0 +1,79 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<form id="frm1" action="/app/sellers/store/" method="post">
+    name:<input type="text" name="name">
+    <br>
+    address:<input type="text" name="address">
+    <br>
+    <input type="hidden" name="id" value="0">
+    <input type="submit">
+</form>
+<table id="tbl1" border="1">
+
+</table>
+    
+{% endblock %}
+{% block scripts %}
+    <script>
+
+        function getSeller(){
+            $.ajax({
+                url:"/app/sellers/get/all/",
+                metjod:"post",
+                dataType:"json",
+                success:function(result){
+                    $("#tbl1").empty()
+                    let sellers = result.sellers
+                    $("#tbl1").append(`<tr>
+                <th>id</th>
+                <th>name</th>
+                <th>address</th>
+                <th>delete</th>
+                <th>edit</th>
+                </tr>`)
+                    for (let seller of sellers)
+                    $("#tbl1").append(`<tr>
+                <td>${seller.id}</td>
+                <td>${seller.name}</td>
+                <td>${seller.address}</td>
+                <td><a class="del" href="/app/sellers/delete/${seller.id}/">delete</a></td>
+                <td><a class="edit" href="/app/sellers/edit/${seller.id}/">edit</a></td>
+                </tr>`)
+                }
+            })
+        }
+        getSeller()
+        $("#tbl1").on("click",".del",function(){
+            let url=$(this).attr("href")
+            $.ajax({
+                url:url,
+                method:"get",
+                dataType:"json",
+                success:function(result){
+                    if(result.message == "succeed"){
+                        getCategory()
+                    }else{
+                        alert("seller is already in use")
+                    }
+                }
+            })
+            return false
+        })
+        $("#tbl1").on("click",".edit",function(result){
+            let url=$(this).attr("href")
+            $.ajax({
+                url:url,
+                method:"post",
+                success:function(result){
+                    $("input[name=name]").val(result.name)
+                    $("input[name=address]").val(result.address)
+                    $("input[name=id]").val(result.id)
+                    getCategory()
+                }
+            })
+            return false
+        })
+    </script>
+{% endblock %}

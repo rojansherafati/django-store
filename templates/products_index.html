@@ -1,0 +1,65 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<a href="/app/products/form/">add</a>
+
+
+<table id="tbl1" border="1">
+
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+
+        function getProduct(){
+            $.ajax({
+                url:"/app/products/get/all/",
+                metjod:"post",
+                dataType:"json",
+                success:function(result){
+                    $("#tbl1").empty()
+                    let products = result.products
+                    $("#tbl1").append(`<tr>
+                <th>id</th>
+                <th>name</th>
+                <th>price</th>
+                <th>brand</th>
+                <th>categories</th>
+                <th>delete</th>
+                <th>edit</th>
+                </tr>`)
+                    for (let product of products)
+                    $("#tbl1").append(`<tr>
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.price}</td>
+                <td>${product.brand}</td>
+                <td>${product.categories}</td>
+                <td><a class="del" href="/app/products/delete/${product.id}/">delete</a></td>
+                <td><a class="edit" href="/app/products/edit/${product.id}/">edit</a></td>
+                </tr>`)
+                }
+            })
+        }
+        getProduct()
+        $("#tbl1").on("click",".del",function(){
+            let url=$(this).attr("href")
+            $.ajax({
+                url:url,
+                method:"get",
+                dataType:"json",
+                success:function(result){
+                    if(result.message == "succeed"){
+                        getProduct()
+                    }else{
+                        alert("Product is already in use")
+                    }
+                }
+            })
+            return false
+        })
+        
+    </script>
+{% endblock %}
